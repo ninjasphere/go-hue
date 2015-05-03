@@ -79,12 +79,18 @@ func (b *Bridge) CreateUser(deviceType, username string) (*User, error) {
 
 	requestObj := map[string]string{
 		"devicetype": deviceType,
-		"username":   username,
 	}
-	_, err := b.client.Post(url, &requestObj)
+
+	if username != "" {
+		requestObj["username"] = username
+	}
+
+	resp, err := b.client.Post(url, &requestObj)
 	if err != nil {
 		return nil, err
 	}
+
+	username = resp[0]["username"].(string)
 
 	return &User{Bridge: b, Username: username}, nil
 }
